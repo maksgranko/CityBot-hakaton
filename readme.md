@@ -1,1 +1,1 @@
-Ссылка на бота: https://t.me/cityguide_hakaton_bot
+_Ссылка на бота: https://t.me/cityguide_hakaton_bot_

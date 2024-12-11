@@ -16,9 +16,11 @@ class DatabaseManager:
                 host=self.host,
                 user=self.user,
                 password=self.password,
-                database=self.database
-            )
+                database=self.database,
+                autocommit = True
+                )
             if self.connection.is_connected():
+                self.connection.ping(reconnect=True, attempts=3, delay=5)
                 print("Connection to the database has been successfully established.")
         except Error as e:
             print(f"Error while connecting to the database: {e}")
@@ -36,7 +38,6 @@ class DatabaseManager:
 
         cursor = self.connection.cursor(dictionary=True)
         try:
-            # Транзакция запускается только для запросов, изменяющих данные
             if not query.strip().upper().startswith("SELECT"):
                 if not self.connection.in_transaction:
                     self.connection.start_transaction()
@@ -63,12 +64,15 @@ class DatabaseManager:
 
         cursor = self.connection.cursor()
         try:
-            self.connection.start_transaction()
+            if not self.connection.in_transaction:
+                self.connection.start_transaction()
+
             cursor.executemany(query, params_list)
             self.connection.commit()
             return cursor.rowcount
         except Error as e:
-            self.connection.rollback()
+            if self.connection.in_transaction:
+                self.connection.rollback()
             print(f"Error while executing batch query: {e}")
             return None
         finally:

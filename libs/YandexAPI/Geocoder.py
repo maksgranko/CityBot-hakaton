@@ -67,3 +67,8 @@ class Geocoder:
     def get_linkByAddress(self, address):
         x,y = tuple(self.geocode_address(address))
         return f"https://yandex.ru/maps/?whatshere%5Bpoint%5D={str(x)}%2C{str(y)}&z=15"
+
+    def get_route(self,coords1,coords2):
+        x,y = coords1
+        x1,y1 = coords2
+        return f"https://yandex.ru/maps/?rtext={x}%2C{y}~{x1}%2C{y1}"
